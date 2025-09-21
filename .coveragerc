@@ -1,0 +1,16 @@
+[paths]
+source =
+    ../pylibtemplate
+    */site-packages/pylibtemplate
+
+[run]
+branch = true
+source =
+    pylibtemplate
+    .
+omit =
+    */pylibtemplate/version.py
+
+[report]
+show_missing = true
+precision = 2
