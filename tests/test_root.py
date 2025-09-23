@@ -132,6 +132,35 @@ def test_5_of_generate_local_git_repo_template():
 
 
 
+def test_1_of_run_pylibtemplate_as_an_app():
+    path_to_test_data = "./test_data"
+
+    params = {"lib_name_for_imports": "mypylib",
+              "abbreviated_lib_name_for_docs": "MyPyLib",
+              "non_abbreviated_lib_name_for_docs": "My Python Library",
+              "author": "Randy Lahey",
+              "email": "randy.lahey@bobandy.com",
+              "gist_id": "5klmds090sdm2jansdu92nrlkjnmsa9r",
+              "path_to_directory_to_contain_new_repo": path_to_test_data}
+
+    cmd_line_args = []
+    for param_name in params:
+        cmd_line_arg = "--"+param_name+"="+str(params[param_name])
+        cmd_line_args.append(cmd_line_arg)
+
+    pylibtemplate._run_pylibtemplate_as_an_app(cmd_line_args)
+
+    with pytest.raises(BaseException) as err_info:
+        cmd_line_arg = "--foo=bar"
+        cmd_line_args.append(cmd_line_arg)
+        pylibtemplate._run_pylibtemplate_as_an_app(cmd_line_args)
+
+    shutil.rmtree(path_to_test_data)
+
+    return None
+
+
+
 ###########################
 ## Define error messages ##
 ###########################

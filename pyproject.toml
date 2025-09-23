@@ -60,3 +60,8 @@ Repository = "https://github.com/mrfitzpa/pylibtemplate"
 [tool.setuptools_scm]
 write_to = "pylibtemplate/version.py"
 version_scheme = "post-release"
+
+
+
+[project.scripts]
+pylibtemplate = "pylibtemplate:_run_pylibtemplate_as_an_app"

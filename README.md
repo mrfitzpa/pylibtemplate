@@ -275,6 +275,13 @@ as the following directory:
 
 - `<local_repo_root>/.git`
 
+Instead of executing the above Python code block, one can achieve the same
+result by running `pylibtemplate` as a command line too. To do this, activate an
+environment in which `pylibtemplate` is installed, and then execute the
+following command in the terminal:
+
+    pylibtemplate --lib_name_for_imports=<your_lib_name> --abbreviated_lib_name_for_docs=<your_abbreviated_lib_name_for_docs> --non_abbreviated_lib_name_for_docs=<your_non_abbreviated_lib_name_for_docs> --author=<author> --email=<email> --gist_id=<your_gist_id> --path_to_directory_to_contain_new_repo=<path_to_directory_to_contain_new_repo>
+
 
 
 ### Add GitHub remote repository to local `git` repository

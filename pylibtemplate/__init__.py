@@ -44,6 +44,9 @@ import os
 # For wrapping text.
 import textwrap
 
+# For parsing command line arguments.
+import argparse
+
 
 
 # For validating and converting objects.
@@ -168,7 +171,7 @@ def _check_and_convert_path_to_directory_to_contain_new_repo(params):
 _default_lib_name_for_imports = \
     _pylibtemplate_lib_name_for_imports
 _default_abbreviated_lib_name_for_docs = \
-    "PyLibTemplate"
+    _pylibtemplate_abbreviated_lib_name_for_docs
 _default_non_abbreviated_lib_name_for_docs = \
     _pylibtemplate_non_abbreviated_lib_name_for_docs
 _default_author = \
@@ -812,6 +815,54 @@ def _print_generate_local_git_repo_template_end_msg(
 
 
 
+def _run_pylibtemplate_as_an_app(cmd_line_args=None):
+    converted_cmd_line_args = _parse_and_convert_cmd_line_args(cmd_line_args)
+
+    kwargs = converted_cmd_line_args
+    generate_local_git_repo_template(**kwargs)
+
+    return None
+
+
+
+def _parse_and_convert_cmd_line_args(cmd_line_args):
+    arg_names = ("lib_name_for_imports",
+                 "abbreviated_lib_name_for_docs",
+                 "non_abbreviated_lib_name_for_docs",
+                 "author",
+                 "email",
+                 "gist_id",
+                 "path_to_directory_to_contain_new_repo")
+
+    parser = argparse.ArgumentParser()
+
+    global_symbol_table = globals()
+    for arg_name in arg_names:
+        obj_name = "_default_" + arg_name
+        default_arg_val = global_symbol_table[obj_name]
+            
+        arg_type = type(default_arg_val)
+
+        parser.add_argument("--"+arg_name,
+                            default=default_arg_val,
+                            type=arg_type)
+
+    current_func_name = "_parse_and_convert_cmd_line_args"
+
+    try:    
+        args = parser.parse_args(args=cmd_line_args)
+    except:
+        err_msg = globals()[current_func_name+"_err_msg_1"]
+        raise SystemExit(err_msg)
+
+    converted_cmd_line_args = dict()
+    for arg_name in arg_names:
+        converted_cmd_line_args[arg_name] = getattr(args, arg_name)
+    
+    return converted_cmd_line_args
+
+
+
 ###########################
 ## Define error messages ##
 ###########################
@@ -830,3 +881,37 @@ _make_output_dir_err_msg_1 = \
 _clone_pylibtemplate_repo_err_msg_1 = \
     ("An error occurred while trying to clone the ``pylibtemplate`` "
      "repository: see the traceback for details.")
+
+_parse_and_convert_cmd_line_args_err_msg_1 = \
+    ("The correct form of the command is:\n"
+     "\n"
+     "    pylibtemplate "
+     "--lib_name_for_imports="
+     "<lib_name_for_imports> "
+     "--abbreviated_lib_name_for_docs="
+     "<abbreviated_lib_name_for_docs> "
+     "--non_abbreviated_lib_name_for_docs="
+     "<non_abbreviated_lib_name_for_docs> "
+     "--author="
+     "<author> "
+     "--email="
+     "<email> "
+     "--gist_id="
+     "<gist_id> "
+     "--path_to_directory_to_contain_new_repo="
+     "<path_to_directory_to_contain_new_repo>\n"
+     "\n"
+     "where the command line arguments are the same as the parameters of the "
+     "function ``pylibtemplate.generate_local_git_repo_template``. For "
+     "details, see the documentation for the libary ``pylibtemplate`` via the "
+     "link https://mrfitzpa.github.io/pylibtemplate, and navigate the "
+     "reference guide for the version of the library that is installed.")
+
+
+
+#########################
+## Main body of script ##
+#########################
+
+if __name__ == "__main__":
+    _run_pylibtemplate_as_an_app()
