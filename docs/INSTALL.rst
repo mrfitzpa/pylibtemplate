@@ -41,7 +41,7 @@ following command from the root of the repository::
 
   pip install .[<selector>]
 
-where ``<selector>`` can be one of the following::
+where ``<selector>`` can be one of the following:
 
 * ``tests``: to install the dependencies necessary for running unit tests;
 * ``examples``: to install the dependencies necessary for executing files stored
