@@ -913,5 +913,6 @@ _parse_and_convert_cmd_line_args_err_msg_1 = \
 ## Main body of script ##
 #########################
 
-if __name__ == "__main__":
-    _run_pylibtemplate_as_an_app()
+_ = (_run_pylibtemplate_as_an_app()
+     if (__name__ == "__main__")
+     else None)

@@ -27,7 +27,7 @@ import pytest
 # For removing directories.
 import shutil
 
-# For setting file permissions.
+# For setting file permissions and executing Python scripts.
 import os
 
 # For making directories.
