@@ -445,7 +445,7 @@ def _rm_file_subset_of_local_git_repo(path_to_directory_to_contain_new_repo,
     path_to_new_repo = _generate_path_to_new_repo(**kwargs)
 
     path_to_dir_to_rm = path_to_new_repo + "/.git"
-    shutil.rmtree(path_to_dir_to_rm)
+    shutil.rmtree(path_to_dir_to_rm, ignore_errors=True)
 
     basename = "how_to_create_a_python_library_using_pylibtemplate.rst"
     path_to_file_to_rm = path_to_new_repo + "/docs/" + basename
