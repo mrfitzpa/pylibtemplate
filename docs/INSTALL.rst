@@ -21,7 +21,7 @@ simply change into the root of the repository, and run the following command::
 The above command will install the latest stable version of ``pylibtemplate``.
 
 To install the latest development version from the main branch of the
-`pylibtemplate GitHub repository <https://github.com/mrfitzpa/pylibtemplate>`_
+`pylibtemplate GitHub repository <https://github.com/mrfitzpa/pylibtemplate>`_,
 one must first clone the repository by running the following command::
 
   git clone https://github.com/mrfitzpa/pylibtemplate.git

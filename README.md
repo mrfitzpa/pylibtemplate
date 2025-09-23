@@ -45,8 +45,6 @@ examples archive.
 
 ### Installing `pylibtemplate`
 
-
-
 For all installation scenarios, first open up the appropriate command line
 interface. On Unix-based systems, you could open e.g. a terminal. On Windows
 systems you could open e.g. an Anaconda Prompt as an administrator.
@@ -64,8 +62,8 @@ simply change into the root of the repository, and run the following command:
 The above command will install the latest stable version of `pylibtemplate`.
 
 To install the latest development version from the main branch of the
-[pylibtemplate GitHub repository](https://github.com/mrfitzpa/pylibtemplate) one
-must first clone the repository by running the following command:
+[pylibtemplate GitHub repository](https://github.com/mrfitzpa/pylibtemplate),
+one must first clone the repository by running the following command:
 
     git clone https://github.com/mrfitzpa/pylibtemplate.git
 
@@ -236,27 +234,29 @@ installed, and then execute the following Python code block:
     kwargs = {"lib_name_for_imports": \
               <your_lib_name>,
               "abbreviated_lib_name_for_docs": \
-	      <your_abbreviated_lib_name_for_docs>,
-	      "non_abbreviated_lib_name_for_docs": \
-	      <your_non_abbreviated_lib_name_for_docs>,
-	      "author": \
-  	      <author>,
-	      "email": \
-	      <email>,
-	      "gist_id": \
-	      <your_gist_id>,
-	      "path_to_directory_to_contain_new_repo": \
-	      <path_to_directory_to_contain_new_repo>}
+              <your_abbreviated_lib_name_for_docs>,
+              "non_abbreviated_lib_name_for_docs": \
+              <your_non_abbreviated_lib_name_for_docs>,
+              "author": \
+              <author>,
+              "email": \
+              <email>,
+              "gist_id": \
+              <your_gist_id>,
+              "path_to_directory_to_contain_new_repo": \
+              <path_to_directory_to_contain_new_repo>}
     pylibtemplate.generate_local_git_repo_template(**kwargs)
 
 This code block will perform several actions: First, it will clone the `git`
 commit of the `pylibtemplate` GitHub repository corresponding to the version of
-`pylibtemplate` being used currently, directly inside the directory specified by
-the parameter `<path_to_directory_to_contain_new_repo>`; Next, it will rename
-the cloned repository to `<your_lib_name>` such that the path to the cloned
-repository becomes `<path_to_directory_to_contain_new_repo>/<your_lib_name>`;
-Next, all instances of the string of characters "pylibtemplate" are replaced
-with `<your_lib_name>`, be it in file contents, directory basenames, or file
+`pylibtemplate` being used currently, in the directory at the patth
+`<path_to_directory_to_contain_new_repo>`, i.e. the `git clone` command is
+executed while the working directory is set temporarily to the path
+`path_to_directory_to_contain_new_repo`; Next, it will rename the cloned
+repository to `<your_lib_name>` such that the path to the cloned repository
+becomes `<path_to_directory_to_contain_new_repo>/<your_lib_name>`; Next, all
+instances of the string of characters "pylibtemplate" are replaced with
+`<your_lib_name>`, be it in file contents, directory basenames, or file
 basenames; Next, all instances of the string of characters "PyLibTemplate" are
 replaced with `<your_abbreviated_lib_name_for_docs>`; Next, all instances of the
 string of characters "Python Library Template" are replaced with
@@ -343,3 +343,6 @@ as well as the files stored in the directories:
 * `<local_repo_root>/tests`
 * `<local_repo_root>/examples`
 * `<local_repo_root>/docs/examples`
+
+After making the necessary modifications, you can proceed to test and debug your
+new Python library.

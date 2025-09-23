@@ -26,6 +26,9 @@ libraries that are suitable for publication on PyPI.
 # For converting relative paths to absolute paths, and for making directories.
 import pathlib
 
+# For timing the execution of different segments of code.
+import time
+
 # For getting the current year.
 import datetime
 
@@ -149,24 +152,12 @@ def _check_and_convert_gist_id(params):
 
 
 def _check_and_convert_path_to_directory_to_contain_new_repo(params):
-    obj_name = "path_to_directory_to_contain_new_repo"
-    obj = params[obj_name]
-
-    if obj is not None:
-        try:
-            kwargs = \
-                {"obj": obj, "obj_name": obj_name}
-            path_to_directory_to_contain_new_repo = \
-                czekitout.convert.to_str_from_str_like(**kwargs)
-        except:
-            kwargs["accepted_types"] = \
-                (str, type(None))
-            _ = \
-                czekitout.check.if_instance_of_any_accepted_types(**kwargs)
-    else:        
-        path_to_directory_to_contain_new_repo = \
-            _check_and_convert_lib_name_for_imports(params)
-
+    obj_name = \
+        "path_to_directory_to_contain_new_repo"
+    kwargs = \
+        {"obj": params[obj_name], "obj_name": obj_name}
+    path_to_directory_to_contain_new_repo = \
+        czekitout.convert.to_str_from_str_like(**kwargs)
     path_to_directory_to_contain_new_repo = \
         str(pathlib.Path(path_to_directory_to_contain_new_repo).absolute())
     
@@ -187,7 +178,7 @@ _default_email = \
 _default_gist_id = \
     _pylibtemplate_gist_id
 _default_path_to_directory_to_contain_new_repo = \
-    None
+    ""
 
 
 
@@ -213,11 +204,12 @@ def generate_local_git_repo_template(
 
     This Python function will perform several actions: First, it will clone the
     ``git`` commit of the ``pylibtemplate`` GitHub repository corresponding to
-    the version of ``pylibtemplate`` being used currently, directly inside the
-    directory specified by the parameter
-    ``path_to_directory_to_contain_new_repo``; Next, it will rename the cloned
-    repository to ``lib_name_for_imports`` such that the path to the cloned
-    repository becomes
+    the version of ``pylibtemplate`` being used currently, in the directory at
+    the path ``path_to_directory_to_contain_new_repo``, i.e. the ``git clone``
+    command is executed while the working directory is set temporarily to the
+    path ``path_to_directory_to_contain_new_repo``; Next, it will rename the
+    cloned repository to ``lib_name_for_imports`` such that the path to the
+    cloned repository becomes
     ``path_to_directory_to_contain_new_repo+"/"+lib_name_for_imports``; Next,
     all instances of the string of characters "pylibtemplate" are replaced with
     ``lib_name_for_imports``, be it in file contents, directory basenames, or
@@ -264,13 +256,12 @@ def generate_local_git_repo_template(
         your unit tests. See the
         :ref:`how_to_create_a_python_library_using_pylibtemplate_sec` page for
         instructions on how to create a GitHub gist for your new Python library.
-    path_to_directory_to_contain_new_repo : `str` | `None`, optional
-        ``path_to_directory_to_contain_new_repo`` is the path to the directory
-        inside which the ``git`` commit --- of the ``pylibtemplate`` GitHub
-        repository corresponding to the version of ``pylibtemplate`` being used
-        currently --- is to be cloned. If
-        ``path_to_directory_to_contain_new_repo`` is set to ``None``, then the
-        parameter will be reassigned the value ``lib_name_for_imports``.
+    path_to_directory_to_contain_new_repo : `str`, optional
+        The path to the directory inside which the ``git`` commit --- of the
+        ``pylibtemplate`` GitHub repository corresponding to the version of
+        ``pylibtemplate`` being used currently --- is to be cloned, i.e. the
+        ``git clone`` command is executed while the working directory is set
+        temporarily to ``path_to_directory_to_contain_new_repo``.
 
     """
     params = locals()
@@ -331,7 +322,9 @@ def _generate_local_git_repo_template(lib_name_for_imports,
     kwargs = {"start_time": \
               start_time,
               "path_to_directory_to_contain_new_repo": \
-              path_to_directory_to_contain_new_repo}
+              path_to_directory_to_contain_new_repo,
+              "lib_name_for_imports": \
+              lib_name_for_imports}
     _print_generate_local_git_repo_template_end_msg(**kwargs)
 
     return None
@@ -359,13 +352,13 @@ def _print_generate_local_git_repo_template_starting_msg(
                        "\n"
                        "..."
                        "\n")
-    msg = unformated_msg.format(lib_name_for_imports,
-                                abbreviated_lib_name_for_docs,
-                                non_abbreviated_lib_name_for_docs,
-                                author,
-                                email,
-                                gist_id,
-                                path_to_directory_to_contain_new_repo)
+    msg = unformatted_msg.format(lib_name_for_imports,
+                                 abbreviated_lib_name_for_docs,
+                                 non_abbreviated_lib_name_for_docs,
+                                 author,
+                                 email,
+                                 gist_id,
+                                 path_to_directory_to_contain_new_repo)
     print(msg)
 
     return None
@@ -560,16 +553,20 @@ def _apply_text_replacements_to_line_set(line_set_to_modify,
 
 
 
-def _apply_text_wrapping_to_lines(line_set_to_modify, filename):
+def _apply_text_wrapping_to_line_set(line_set_to_modify, filename):
     file_extension = os.path.splitext(filename)[1]
 
     if file_extension == ".py":
         func_alias = _apply_text_wrapping_to_line_set_of_py_file
-    elif file_extension in (".md", ".sh", ".rst"):
-        func_alias = _apply_text_wrapping_to_line_set_of_md_sh_or_rst_file)
+    elif file_extension in (".md", ".rst"):
+        func_alias = _apply_text_wrapping_to_line_set_of_md_or_rst_file
+    elif file_extension == ".sh":
+        func_alias = _apply_text_wrapping_to_line_set_of_sh_file
 
     kwargs = {"line_set_to_modify": line_set_to_modify}
-    modified_line_set = func_alias(**kwargs)
+    modified_line_set = (func_alias(**kwargs)
+                         if (file_extension in (".py", ".md", ".sh", ".rst"))
+                         else line_set_to_modify.copy())
 
     return modified_line_set
 
@@ -579,14 +576,14 @@ def _apply_text_wrapping_to_line_set_of_py_file(line_set_to_modify):
     modified_line_set = line_set_to_modify.copy()
 
     pattern_1 = r"#\ ((Copyright)|(For\ setting\ up))\ .*"
-    pattern_2 = r"\s*((lib_name)|(project)|(author))\ =\ .+"
+    pattern_2 = r"\s*((lib_name)|(project)|(author))\ =\ \".+"
     pattern_3 = r"\s*r\"\"\".+\ ``.+``.+"
 
     end_of_file_has_not_been_reached = True
     line_idx = 0
     
     while end_of_file_has_not_been_reached:
-        modified_line = line_to_modify.rstrip()
+        modified_line = modified_line_set[line_idx].rstrip()
 
         if re.fullmatch(pattern_1, modified_line):
             func_alias = _apply_text_wrapping_to_single_line_python_comment
@@ -601,6 +598,10 @@ def _apply_text_wrapping_to_line_set_of_py_file(line_set_to_modify):
         modified_line_subset = ([modified_line]
                                 if (func_alias is None)
                                 else func_alias(**kwargs))
+
+        modified_line_set = (modified_line_set[:line_idx]
+                             + modified_line_subset
+                             + modified_line_set[line_idx+1:])
         
         line_idx += len(modified_line_subset)
         if line_idx >= len(modified_line_set):
@@ -623,7 +624,7 @@ def _apply_text_wrapping_to_single_line_python_comment(line_to_modify):
     modified_line = modified_line.lstrip()[2:]
 
     kwargs = {"text": modified_line,
-              "width": _char_limit_per_line-indent-2,
+              "width": _char_limit_per_line-char_idx-2,
               "break_long_words": False}
     lines_resulting_from_text_wrapping = textwrap.wrap(**kwargs)
     
@@ -692,7 +693,7 @@ def _apply_text_wrapping_to_single_line_partial_doc_str(line_to_modify):
 
 
 
-def _apply_text_wrapping_to_line_set_of_md_sh_or_rst_file(line_set_to_modify):
+def _apply_text_wrapping_to_line_set_of_md_or_rst_file(line_set_to_modify):
     modified_line_set = line_set_to_modify.copy()
 
     pattern_1 = (r"((\[!\[)|(\s+)|(\*\ )|(\-\ \`)|(\.\.\ )|(\{\%)"
@@ -700,28 +701,71 @@ def _apply_text_wrapping_to_line_set_of_md_sh_or_rst_file(line_set_to_modify):
     pattern_2 = r"((----+)|(====+))"
 
     end_of_file_has_not_been_reached = True
-    line_idx = 0
+    line_idx = 1
     
     while end_of_file_has_not_been_reached:
-        modified_line_1 = line_set_to_modify[line_idx].rstrip()
+        modified_line_1 = modified_line_set[line_idx].rstrip()
 
-        if ((line_idx == 0)
-            or re.fullmatch(pattern_1, modified_line_1)
+        if (re.fullmatch(pattern_1, modified_line_1)
             or (modified_line_1 in ("", "#"))):
             modified_line_subset = [modified_line_1]
         else:
-            prefix = "# " * (modified_line_1[0] == "#")
             end_of_paragraph_has_not_been_reached = True
             
             while end_of_paragraph_has_not_been_reached:
                 if line_idx+1 < len(modified_line_set):
-                    modified_line_2 = line_set_to_modify[line_idx+1].rstrip()
+                    modified_line_2 = modified_line_set[line_idx+1].rstrip()
                     if (re.fullmatch(pattern_1, modified_line_2)
                         or (modified_line_2 in ("", "#"))):
                         end_of_paragraph_has_not_been_reached = False
                     else:
-                        modified_line_1 += " " + modified_line_2.lstrip(prefix)
-                        line_set_to_modify.pop(line_idx+1)
+                        modified_line_1 += " " + modified_line_2.lstrip()
+                        modified_line_set.pop(line_idx+1)
+                else:
+                    end_of_paragraph_has_not_been_reached = False
+
+            if re.fullmatch(pattern_2, modified_line_2):
+                modified_line_subset = [modified_line_1]
+            else:
+                kwargs = {"text": modified_line_1,
+                          "width": _char_limit_per_line,
+                          "break_long_words": False}
+                modified_line_subset = textwrap.wrap(**kwargs)
+
+        modified_line_set = (modified_line_set[:line_idx]
+                             + modified_line_subset
+                             + modified_line_set[line_idx+1:])
+
+        line_idx += len(modified_line_subset)
+        if line_idx >= len(modified_line_set):
+            end_of_file_has_not_been_reached = False
+
+    lines_resulting_from_text_wrapping = modified_line_set
+
+    return lines_resulting_from_text_wrapping
+
+
+
+def _apply_text_wrapping_to_line_set_of_sh_file(line_set_to_modify):
+    modified_line_set = line_set_to_modify.copy()
+
+    pattern = r"#\ .+"
+
+    end_of_file_has_not_been_reached = True
+    line_idx = 2
+    
+    while end_of_file_has_not_been_reached:
+        modified_line_1 = modified_line_set[line_idx].rstrip()
+
+        if re.fullmatch(pattern, modified_line_1):
+            prefix = "# "
+            end_of_paragraph_has_not_been_reached = True
+            
+            while end_of_paragraph_has_not_been_reached:
+                modified_line_2 = modified_line_set[line_idx+1].rstrip()
+                if re.fullmatch(pattern, modified_line_2):
+                    modified_line_1 += " " + modified_line_2.lstrip(prefix)
+                    modified_line_set.pop(line_idx+1)
                 else:
                     end_of_paragraph_has_not_been_reached = False
 
@@ -729,30 +773,39 @@ def _apply_text_wrapping_to_line_set_of_md_sh_or_rst_file(line_set_to_modify):
                       "width": _char_limit_per_line,
                       "subsequent_indent": prefix,
                       "break_long_words": False}
-            modified_line_subset = ([modified_line_1]
-                                    if re.fullmatch(pattern_2, modified_line_2)
-                                    else textwrap.wrap(**kwargs))
+            modified_line_subset = textwrap.wrap(**kwargs)
+        else:
+            modified_line_subset = [modified_line_1]
 
-        lines_resulting_from_text_wrapping = (line_set_to_modify[:line_idx]
-                                              + modified_line_subset
-                                              + line_set_to_modify[line_idx+1:])
+        modified_line_set = (modified_line_set[:line_idx]
+                             + modified_line_subset
+                             + modified_line_set[line_idx+1:])
 
         line_idx += len(modified_line_subset)
         if line_idx >= len(modified_line_set):
             end_of_file_has_not_been_reached = False
+
+    lines_resulting_from_text_wrapping = modified_line_set
 
     return lines_resulting_from_text_wrapping
 
 
 
 def _print_generate_local_git_repo_template_end_msg(
-        start_time, path_to_directory_to_contain_new_repo):
+        start_time,
+        path_to_directory_to_contain_new_repo,
+        lib_name_for_imports):
     elapsed_time = time.time() - start_time
+    path_to_local_git_repo_template = (path_to_directory_to_contain_new_repo
+                                       + "/"
+                                       + lib_name_for_imports)
+
     unformatted_msg = ("Finished generating the local ``git`` repository, "
                        "which is located at the path ``'{}'``. Time taken to "
                        "generate the local ``git`` repository: {} "
                        "s.\n\n\n")
-    msg = unformatted_msg.format(output_filename, elapsed_time)
+    msg = unformatted_msg.format(path_to_local_git_repo_template,
+                                 elapsed_time)
     print(msg)
 
     return None

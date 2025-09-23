@@ -11,8 +11,7 @@ libraries that are suitable for publication on PyPI.\
 """
 readme = "README.md"
 authors = [
-    {name = "Matthew Fitzpatrick",
-     email = "matthew.rc.fitzpatrick@gmail.com"}
+    {name = "Matthew Fitzpatrick", email = "matthew.rc.fitzpatrick@gmail.com"}
 ]
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",

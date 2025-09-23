@@ -47,7 +47,7 @@ import pylibtemplate
 def test_1_of_generate_local_git_repo_template():
     path_to_test_data = "./pylibtemplate"
 
-    generate_local_git_repo_template()
+    pylibtemplate.generate_local_git_repo_template()
     
     shutil.rmtree(path_to_test_data)
 
@@ -58,21 +58,14 @@ def test_1_of_generate_local_git_repo_template():
 def test_2_of_generate_local_git_repo_template():
     path_to_test_data = "./test_data"
 
-    kwargs = {"lib_name_for_imports": \
-              "mypylib",
-              "abbreviated_lib_name_for_docs": \
-              "MyPyLib",
-              "non_abbreviated_lib_name_for_docs": \
-              "My Python Library",
-              "author": \
-              "Randy Lahey",
-              "email": \
-              "randy.lahey@bobandy.com",
-              "gist_id": \
-              "5klmds090sdm2jansdu92nrlkjnmsa9r",
-              "path_to_directory_to_contain_new_repo": \
-              path_to_test_data + "/mypylib"}
-    generate_local_git_repo_template(**kwargs)
+    kwargs = {"lib_name_for_imports": "mypylib",
+              "abbreviated_lib_name_for_docs": "MyPyLib",
+              "non_abbreviated_lib_name_for_docs": "My Python Library",
+              "author": "Randy Lahey",
+              "email": "randy.lahey@bobandy.com",
+              "gist_id": "5klmds090sdm2jansdu92nrlkjnmsa9r",
+              "path_to_directory_to_contain_new_repo": path_to_test_data}
+    pylibtemplate.generate_local_git_repo_template(**kwargs)
 
     shutil.rmtree(path_to_test_data)
 
@@ -80,7 +73,7 @@ def test_2_of_generate_local_git_repo_template():
 
 
 
-def test_2_of_generate_local_git_repo_template():
+def test_3_of_generate_local_git_repo_template():
     path_to_test_data = "./test_data"
     pathlib.Path(path_to_test_data).mkdir(parents=True, exist_ok=True)
     os.chmod(path_to_test_data, 0o111)
@@ -88,7 +81,7 @@ def test_2_of_generate_local_git_repo_template():
     with pytest.raises(IOError) as err_info:
         kwargs = {"path_to_directory_to_contain_new_repo": \
                   path_to_test_data + "/mypylib"}
-        generate_local_git_repo_template(**kwargs)
+        pylibtemplate.generate_local_git_repo_template(**kwargs)
 
     os.chmod(path_to_test_data, 0o711)
 
@@ -98,14 +91,14 @@ def test_2_of_generate_local_git_repo_template():
 
 
 
-def test_3_of_generate_local_git_repo_template():
+def test_4_of_generate_local_git_repo_template():
     with pytest.raises(ValueError) as err_info:
         kwargs = {"lib_name_for_imports": "123abc"}
-        generate_local_git_repo_template(**kwargs)
+        pylibtemplate.generate_local_git_repo_template(**kwargs)
 
     with pytest.raises(ValueError) as err_info:
         kwargs = {"abbreviated_lib_name_for_docs": "123abc"}
-        generate_local_git_repo_template(**kwargs)
+        pylibtemplate.generate_local_git_repo_template(**kwargs)
 
     param_name_subset = ("author",
                          "email",
@@ -115,30 +108,23 @@ def test_3_of_generate_local_git_repo_template():
     for param_name in param_name_subset:
         with pytest.raises(TypeError) as err_info:
             kwargs = {param_name: slice(None)}
-            generate_local_git_repo_template(**kwargs)
+            pylibtemplate.generate_local_git_repo_template(**kwargs)
 
     return None
 
 
 
-def test_4_of_generate_local_git_repo_template():
+def test_5_of_generate_local_git_repo_template():
     path_to_test_data = "./test_data"
 
-    kwargs = {"lib_name_for_imports": \
-              "mypylib",
-              "abbreviated_lib_name_for_docs": \
-              "MyPyLib",
-              "non_abbreviated_lib_name_for_docs": \
-              "My Python Library",
-              "author": \
-              "F"+ "o"*130 +" Bar",
-              "email": \
-              "randy.lahey@bobandy.com",
-              "gist_id": \
-              "5klmds090sdm2jansdu92nrlkjnmsa9r",
-              "path_to_directory_to_contain_new_repo": \
-              path_to_test_data + "/mypylib"}
-    generate_local_git_repo_template(**kwargs)
+    kwargs = {"lib_name_for_imports": "mypylib",
+              "abbreviated_lib_name_for_docs": "MyPyLib",
+              "non_abbreviated_lib_name_for_docs": "My Python Library",
+              "author": "F"+ "o"*170 +" Bar",
+              "email": "randy.lahey@bobandy.com",
+              "gist_id": "5klmds090sdm2jansdu92nrlkjnmsa9r",
+              "path_to_directory_to_contain_new_repo": path_to_test_data}
+    pylibtemplate.generate_local_git_repo_template(**kwargs)
 
     shutil.rmtree(path_to_test_data)
 

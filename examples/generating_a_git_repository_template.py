@@ -52,5 +52,5 @@ kwargs = {"lib_name_for_imports": "mypylib",
           "author": "Randy Lahey",
           "email": "randy.lahey@bobandy.com",
           "gist_id": "5klmds090sdm2jansdu92nrlkjnmsa9r",
-          "path_to_directory_to_contain_new_repo": "./mypylib"}
+          "path_to_directory_to_contain_new_repo": "./examples_data"}
 pylibtemplate.generate_local_git_repo_template(**kwargs)

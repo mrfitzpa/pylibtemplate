@@ -1,13 +1,15 @@
 # Ignore select directories
 __pycache__/
 .ipynb_checkpoints/
-examples/mypylib/
-tests/mypylib/
+examples/examples_data/
+tests/pylibtemplate/
 tests/test_data/
 
 # Ignore select files
 pylibtemplate/_version.py
-notes.rst
+pylibtemplate/version.py
+tests/.coverage
+tests/coverage.json
 
 # Ignore .pyc files
 *.pyc
