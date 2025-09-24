@@ -388,7 +388,7 @@ def _clone_pylibtemplate_repo(path_to_directory_to_contain_new_repo,
 
         cloning_options = (tuple()
                            if (tag is None)
-                           else ("--depth=1", "--branch={}".format(tag)))
+                           else ("--depth 1", "--branch {}".format(tag)))
 
         kwargs = {"url": github_url,
                   "to_path": path_to_new_repo,
@@ -428,7 +428,7 @@ def _generate_path_to_new_repo(path_to_directory_to_contain_new_repo,
 def _get_pylibtemplate_tag():
     pattern = r"[0-9]\.[0-9]\.[0-9]"
     pylibtemplate_version = __version__    
-    pylibtemplate_tag = ("v{}".format(pylibtemplate.version.__version__)
+    pylibtemplate_tag = ("v{}".format(pylibtemplate_version)
                          if re.fullmatch(pattern, pylibtemplate_version)
                          else None)
 
