@@ -3,6 +3,8 @@
 Instructions for installing and uninstalling ``pylibtemplate``
 ==============================================================
 
+
+
 Installing ``pylibtemplate``
 ----------------------------
 
@@ -17,7 +19,7 @@ Installing ``pylibtemplate`` using ``pip``
 
 Before installing ``pylibtemplate``, make sure that you have activated the
 (virtual) environment in which you intend to install said package. After which,
-simply change into the root of the repository, and run the following command::
+simply run the following command::
 
   pip install pylibtemplate
 
@@ -63,6 +65,9 @@ along with the subset of additional dependencies specified by ``<selector>``.
 
 Installing ``pylibtemplate`` using ``conda``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Before proceeding, make sure that you have activated the (virtual) ``conda``
+environment in which you intend to install said package.
 
 To install ``pylibtemplate`` using the ``conda`` package manager, run the
 following command::
