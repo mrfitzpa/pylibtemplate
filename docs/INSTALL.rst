@@ -3,6 +3,9 @@
 Instructions for installing and uninstalling ``pylibtemplate``
 ==============================================================
 
+Installing ``pylibtemplate``
+----------------------------
+
 For all installation scenarios, first open up the appropriate command line
 interface. On Unix-based systems, you could open e.g. a terminal. On Windows
 systems you could open e.g. an Anaconda Prompt as an administrator.
@@ -10,7 +13,7 @@ systems you could open e.g. an Anaconda Prompt as an administrator.
 
 
 Installing ``pylibtemplate`` using ``pip``
-------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Before installing ``pylibtemplate``, make sure that you have activated the
 (virtual) environment in which you intend to install said package. After which,
@@ -59,7 +62,7 @@ along with the subset of additional dependencies specified by ``<selector>``.
 
 
 Installing ``pylibtemplate`` using ``conda``
---------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install ``pylibtemplate`` using the ``conda`` package manager, run the
 following command::

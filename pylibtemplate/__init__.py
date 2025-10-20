@@ -700,8 +700,8 @@ def _apply_text_wrapping_to_line_set_of_md_or_rst_file(line_set_to_modify):
     modified_line_set = line_set_to_modify.copy()
 
     pattern_1 = (r"((\[!\[)|(\s+)|(\*\ )|(\-\ \`)|(\.\.\ )|(\{\%)"
-                 r"|(\{\{)|(##)|(#\ \-)|(----+)|(====+)).*")
-    pattern_2 = r"((----+)|(====+))"
+                 r"|(\{\{)|(##)|(#\ \-)|(----+)|(====+)|(~~~~+)).*")
+    pattern_2 = r"((----+)|(====+)|(~~~~+))"
 
     end_of_file_has_not_been_reached = True
     line_idx = 1
