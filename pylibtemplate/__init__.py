@@ -547,7 +547,8 @@ def _apply_text_replacements_to_line_set(line_set_to_modify,
             modified_line = modified_line.replace(old_substring, new_substring)
         modified_line_set[line_idx] = modified_line
         if ((re.fullmatch("=+", modified_line)
-             or re.fullmatch("-+", modified_line))
+             or re.fullmatch("-+", modified_line)
+             or re.fullmatch("~+", modified_line))
             and (len(modified_line) > 3)):
             modified_line_set[line_idx] = (modified_line[0]
                                            * len(modified_line_set[line_idx-1]))
