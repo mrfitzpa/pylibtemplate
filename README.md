@@ -58,7 +58,7 @@ systems you could open e.g. an Anaconda Prompt as an administrator.
 
 Before installing `pylibtemplate`, make sure that you have activated the
 (virtual) environment in which you intend to install said package. After which,
-simply change into the root of the repository, and run the following command:
+simply run the following command:
 
     pip install pylibtemplate
 
@@ -116,12 +116,12 @@ The above command will install the latest stable version of `pylibtemplate`.
 ### Uninstalling `pylibtemplate`
 
 If `pylibtemplate` was installed using `pip`, then to uninstall, run the
-following command from the root of the repository:
+following command:
 
     pip uninstall pylibtemplate
 
 If `pylibtemplate` was installed using `conda`, then to uninstall, run the
-following command from the root of the repository:
+following command:
 
     conda remove pylibtemplate
 

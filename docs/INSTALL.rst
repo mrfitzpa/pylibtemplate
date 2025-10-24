@@ -82,11 +82,11 @@ Uninstalling ``pylibtemplate``
 ------------------------------
 
 If ``pylibtemplate`` was installed using ``pip``, then to uninstall, run the
-following command from the root of the repository::
+following command::
 
   pip uninstall pylibtemplate
 
 If ``pylibtemplate`` was installed using ``conda``, then to uninstall, run the
-following command from the root of the repository::
+following command::
 
   conda remove pylibtemplate
