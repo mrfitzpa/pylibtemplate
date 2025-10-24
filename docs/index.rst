@@ -5,6 +5,9 @@ Python Library Template (PyLibTemplate)
 generates ``git`` repository templates for building Python libraries that are
 suitable for publication on PyPI.
 
+The source code can be found in the `pylibtemplate GitHub repository
+<https://github.com/mrfitzpa/pylibtemplate>`_.
+
 
 
 Instructions for installing and uninstalling ``pylibtemplate``

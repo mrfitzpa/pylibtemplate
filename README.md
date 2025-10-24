@@ -15,6 +15,9 @@ Visit the `pylibtemplate` [website](https://mrfitzpa.github.io/pylibtemplate)
 for a web version of the installation instructions, the reference guide, and the
 examples archive.
 
+The source code can be found in the [`pylibtemplate` GitHub
+repository](https://github.com/mrfitzpa/pylibtemplate).
+
 
 
 ## Table of contents
