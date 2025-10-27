@@ -151,6 +151,41 @@ def import_project_lib(project):
 
 
 
+def extract_major_minor_from_version(version):
+    major, minor, patch = ((None, None, None)
+                           if (version == "latest")
+                           else version.split("."))
+    major_minor = "latest" if (major is None) else "{}.{}".format(major, minor)
+
+    return major_minor
+
+
+
+def generate_version_subset():
+    cmd_output_as_bytes = subprocess.check_output("git tag", shell=True)
+    cmd_output = cmd_output_as_bytes.decode("utf-8")
+    tag_set = cmd_output.rstrip("\n").split("\n")
+
+    pattern = r"v[0-9]+\.[0-9]+\.[0-9]+"
+    release_tag_set = tuple(tag
+                            for tag
+                            in tag_set
+                            if re.fullmatch(pattern, tag))
+
+    version_subset = dict()
+    for tag in release_tag_set:
+        version = tag[1:]
+        major, minor, patch = [int(int_as_str)
+                               for int_as_str
+                               in version.split(".")]
+        version_subset.setdefault(major, dict())
+        version_subset[major].setdefault(minor, 0)
+        version_subset[major][minor] = max(version_subset[major][minor], patch)
+
+    return version_subset
+
+
+
 ###########################
 ## Define error messages ##
 ###########################
@@ -178,12 +213,8 @@ if build_all_docs is not None:
     current_language = os.environ.get("current_language")    
     current_version = os.environ.get("current_version")
 
-    major, minor, patch = ((None, None, None)
-                           if (current_version == "latest")
-                           else current_version.split("."))
-    current_major_minor = ("latest"
-                           if (major is None)
-                           else "{}.{}".format(major, minor))
+    kwargs = {"version": current_version}
+    current_major_minor = extract_major_minor_from_version(**kwargs)
 
     html_context = {"current_language" : current_language,
                     "languages" : [],
@@ -196,25 +227,7 @@ if build_all_docs is not None:
     if current_language == "en":
         html_context["versions"].append(["latest", pages_root])
 
-    cmd_output_as_bytes = subprocess.check_output("git tag", shell=True)
-    cmd_output = cmd_output_as_bytes.decode("utf-8")
-    tag_set = cmd_output.rstrip("\n").split("\n")
-
-    pattern = r"v[0-9]+\.[0-9]+\.[0-9]+"
-    release_tag_set = tuple(tag
-                            for tag
-                            in tag_set
-                            if re.fullmatch(pattern, tag))
-
-    version_subset = dict()
-    for tag in release_tag_set:
-        version = tag[1:]
-        major, minor, patch = [int(int_as_str)
-                               for int_as_str
-                               in version.split(".")]
-        version_subset.setdefault(major, dict())
-        version_subset[major].setdefault(minor, 0)
-        version_subset[major][minor] = max(version_subset[major][minor], patch)
+    version_subset = generate_version_subset()
 
     if current_version != "latest":
         language = "en"
