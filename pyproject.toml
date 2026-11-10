@@ -11,18 +11,24 @@ libraries that are suitable for publication on PyPI.\
 """
 readme = "README.md"
 authors = [
-    {name = "Matthew Fitzpatrick", email = "matthew.rc.fitzpatrick@gmail.com"}
+    {name = "Matthew Fitzpatrick", email = "matthew.rc.fitzpatrick@gmail.com"},
+]
+maintainers = [
+    {name = "Matthew Fitzpatrick", email = "matthew.rc.fitzpatrick@gmail.com"},
+]
+license = "GPL-3.0-or-later"
+license-files = [
+    "LICENSE"
 ]
 classifiers = [
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
     "Natural Language :: English"
 ]

@@ -4,12 +4,16 @@ __pycache__/
 examples/examples_data/
 tests/pylibtemplate/
 tests/test_data/
+pages/
+public/
+.gitlab-ci-local/
 
 # Ignore select files
 pylibtemplate/_version.py
 pylibtemplate/version.py
 tests/.coverage
 tests/coverage.json
+Dockerfile
 
 # Ignore .pyc files
 *.pyc

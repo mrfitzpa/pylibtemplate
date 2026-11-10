@@ -320,11 +320,8 @@ The following files do not need to be modified under any circumstances:
 The following files may need to be modified to reflect the appropriate license
 should it differ from that of `pylibtemplate`:
 
-* `<local_repo_root>/run_tests.sh`
-* `<local_repo_root>/setup.py`
 * `<local_repo_root>/LICENSE`
 * `<local_repo_root>/docs/license.rst`
-* `<local_repo_root>/docs/build_docs.py`
 
 The following files may need to be modified if a custom installation procecdure
 is required to run your new Python library's unit tests, that differs from the

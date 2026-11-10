@@ -1,6 +1,6 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
-# Copyright 2025 Matthew Fitzpatrick.
+# Copyright 2026 Matthew Fitzpatrick.
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,6 +22,13 @@
 # that has `pylibtemplate` installed, along with all of the dependencies
 # requried to run the unit tests and measure code coverage. See the root-level
 # README for installation instructions.
+#
+# The correct form of the command to run the script is::
+#
+#   source <path_to_current_script>
+#
+# where ``<path_to_current_script>`` is the absolute or relative path to the
+# current script.
 
 
 

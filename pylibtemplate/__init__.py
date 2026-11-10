@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2025 Matthew Fitzpatrick.
+# Copyright 2026 Matthew Fitzpatrick.
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,6 +26,12 @@ libraries that are suitable for publication on PyPI.
 # For converting relative paths to absolute paths, and for making directories.
 import pathlib
 
+# For percent-encoding strings for URLs.
+import urllib.parse
+
+# For sending HTTP GET requests.
+import requests
+
 # For timing the execution of different segments of code.
 import time
 
@@ -46,6 +52,9 @@ import textwrap
 
 # For parsing command line arguments.
 import argparse
+
+# For reading JSON files.
+import json
 
 
 
@@ -72,13 +81,12 @@ __all__ = ["generate_local_git_repo_template"]
 
 
 
-_pylibtemplate_lib_name_for_imports = "pylibtemplate"
-_pylibtemplate_abbreviated_lib_name_for_docs = "PyLibTemplate"
-_pylibtemplate_non_abbreviated_lib_name_for_docs = "Python Library Template"
-_pylibtemplate_author = "Matthew Fitzpatrick"
-_pylibtemplate_email = "matthew.rc.fitzpatrick@gmail.com"
-_pylibtemplate_gist_id = "7baba2a56d07b59cc49b8323f44416e5"
-_pylibtemplate_copyright_year = "2025"
+def _check_and_convert_repo_name(params):
+    obj_name = "repo_name"
+    kwargs = {"obj": params[obj_name], "obj_name": obj_name}
+    repo_name = czekitout.convert.to_str_from_str_like(**kwargs)
+    
+    return repo_name
 
 
 
@@ -127,21 +135,90 @@ def _check_and_convert_non_abbreviated_lib_name_for_docs(params):
 
 
 
-def _check_and_convert_author(params):
-    obj_name = "author"
+def _check_and_convert_author_to_email_map(params):
+    obj_name = "author_to_email_map"
     kwargs = {"obj": params[obj_name], "obj_name": obj_name}
-    author = czekitout.convert.to_str_from_str_like(**kwargs)
+    author_to_email_map = czekitout.convert.to_dict(**kwargs)
+    author_to_email_map_copy = author_to_email_map.copy()
+
+    current_func_name = "_check_and_convert_author_to_email_map"
+
+    for author in author_to_email_map:
+        try:
+            kwargs = {"obj": author,
+                      "obj_name": "author"}
+            author = czekitout.convert.to_str_from_str_like(**kwargs)
+        except:
+            unformatted_err_msg = globals()[current_func_name+"_err_msg_1"]
+            err_msg = unformatted_err_msg.format(author)
+            raise ValueError(err_msg)
+        
+        kwargs = {"obj": author_to_email_map[author],
+                  "obj_name": "author_to_email_map[{}]".format(author)}
+        email = czekitout.convert.to_str_from_str_like(**kwargs)
+
+        author_to_email_map_copy[author] = email
+
+    author_to_email_map = author_to_email_map_copy
     
-    return author
+    return author_to_email_map
 
 
 
-def _check_and_convert_email(params):
-    obj_name = "email"
+def _check_and_convert_maintainer_to_email_map(params):
+    obj_name = "maintainer_to_email_map"
     kwargs = {"obj": params[obj_name], "obj_name": obj_name}
-    email = czekitout.convert.to_str_from_str_like(**kwargs)
+    maintainer_to_email_map = czekitout.convert.to_dict(**kwargs)
+    maintainer_to_email_map_copy = maintainer_to_email_map.copy()
+
+    current_func_name = "_check_and_convert_maintainer_to_email_map"
+
+    for maintainer in maintainer_to_email_map:
+        try:
+            kwargs = {"obj": maintainer,
+                      "obj_name": "maintainer"}
+            maintainer = czekitout.convert.to_str_from_str_like(**kwargs)
+        except:
+            unformatted_err_msg = globals()[current_func_name+"_err_msg_1"]
+            err_msg = unformatted_err_msg.format(maintainer)
+            raise ValueError(err_msg)
+        
+        kwargs = {"obj": maintainer_to_email_map[maintainer],
+                  "obj_name": "maintainer_to_email_map[{}]".format(maintainer)}
+        email = czekitout.convert.to_str_from_str_like(**kwargs)
+
+        maintainer_to_email_map_copy[maintainer] = email
+
+    maintainer_to_email_map = maintainer_to_email_map_copy
     
-    return email
+    return maintainer_to_email_map
+
+
+
+def _check_and_convert_copyright_owner(params):
+    obj_name = "copyright_owner"
+    kwargs = {"obj": params[obj_name], "obj_name": obj_name}
+    copyright_owner = czekitout.convert.to_str_from_str_like(**kwargs)
+    
+    return copyright_owner
+
+
+
+def _check_and_convert_namespace_url(params):
+    obj_name = "namespace_url"
+    kwargs = {"obj": params[obj_name], "obj_name": obj_name}
+    namespace_url = czekitout.convert.to_str_from_str_like(**kwargs)
+    
+    return namespace_url
+
+
+
+def _check_and_convert_doc_root_url(params):
+    obj_name = "doc_root_url"
+    kwargs = {"obj": params[obj_name], "obj_name": obj_name}
+    doc_root_url = czekitout.convert.to_str_from_str_like(**kwargs)
+    
+    return doc_root_url
 
 
 
@@ -151,6 +228,102 @@ def _check_and_convert_gist_id(params):
     gist_id = czekitout.convert.to_str_from_str_like(**kwargs)
     
     return gist_id
+
+
+
+def _check_and_convert_spdx_id(params):
+    obj_name = "spdx_id"
+    kwargs = {"obj": params[obj_name], "obj_name": obj_name}
+    spdx_id = czekitout.convert.to_str_from_str_like(**kwargs)
+
+    current_func_name = "_check_and_convert_spdx_id"
+
+    try:
+        _ = _get_license_info_from_spdx_id(spdx_id)
+    except:
+        unformatted_err_msg = globals()[current_func_name+"_err_msg_1"]
+        err_msg = unformatted_err_msg.format(spdx_id)
+        raise ValueError(err_msg)
+    
+    return spdx_id
+
+
+
+def _get_license_info_from_spdx_id(spdx_id):
+    spdx_json_data = _get_spdx_json_data(spdx_id)
+
+    license_name = spdx_json_data.get("name", spdx_id)
+
+    see_also_data = spdx_json_data.get("seeAlso", [])
+    fallback_url = "https://spdx.org/licenses/{}.html".format(spdx_id)
+    license_page_url = (see_also_data[0]
+                        if (len(see_also_data) > 0)
+                        else fallback_url)
+
+    badge_label = license_name.replace(" ", "_")
+    badge_label_encoded = urllib.parse.quote(badge_label, safe="_")
+    license_badge_url = ("https://img.shields.io/badge/License"
+                         "-{}-blue.svg".format(badge_label_encoded))
+
+    license_text = spdx_json_data.get("licenseText").splitlines()
+
+    license_info = {"license_name": license_name,
+                    "license_page_url": license_page_url,
+                    "license_badge_url": license_badge_url,
+                    "license_text": license_text}
+
+    return license_info
+
+
+
+def _get_spdx_json_data(spdx_id):
+    spdx_json_file_url = ("https://raw.githubusercontent.com/spdx"
+                          "/license-list-data/main/json/details"
+                          "/{}.json".format(spdx_id))
+
+    current_func_name = "_get_spdx_json_data"
+
+    http_get_request_response = requests.get(spdx_json_file_url)
+    if http_get_request_response.status_code != 200:
+        unformatted_err_msg = globals()[current_func_name+"_err_msg_1"]
+        err_msg = unformatted_err_msg.format(spdx_id)
+        raise ValueError(err_msg)
+
+    spdx_json_data = http_get_request_response.json()
+
+    return spdx_json_data
+
+
+
+def _check_and_convert_file_header(params):
+    obj_name = "file_header"
+    obj = params[obj_name]
+
+    if isinstance(obj, type(None)):
+        file_header = None
+    else:
+        kwargs = {"obj": obj, "obj_name": obj_name}
+        file_header = czekitout.convert.to_tuple_of_strs(**kwargs)
+    
+    return file_header
+
+
+
+def _check_and_convert_gitlab_test_tags(params):
+    obj_name = "gitlab_test_tags"
+    kwargs = {"obj": params[obj_name], "obj_name": obj_name}
+    gitlab_test_tags = czekitout.convert.to_tuple_of_strs(**kwargs)
+    
+    return gitlab_test_tags
+
+
+
+def _check_and_convert_gitlab_doc_tags(params):
+    obj_name = "gitlab_doc_tags"
+    kwargs = {"obj": params[obj_name], "obj_name": obj_name}
+    gitlab_doc_tags = czekitout.convert.to_tuple_of_strs(**kwargs)
+    
+    return gitlab_doc_tags
 
 
 
@@ -168,36 +341,68 @@ def _check_and_convert_path_to_directory_to_contain_new_repo(params):
 
 
 
+_default_repo_name = \
+    "pylibtemplate"
 _default_lib_name_for_imports = \
-    _pylibtemplate_lib_name_for_imports
+    "PyLibTemplate"
 _default_abbreviated_lib_name_for_docs = \
-    _pylibtemplate_abbreviated_lib_name_for_docs
+    "PyLibTemplate"
 _default_non_abbreviated_lib_name_for_docs = \
-    _pylibtemplate_non_abbreviated_lib_name_for_docs
-_default_author = \
-    _pylibtemplate_author
-_default_email = \
-    _pylibtemplate_email
+    "Python Library Template"
+_default_copyright_owner = \
+    "Matthew Fitzpatrick"
+_default_author_to_email_map = \
+    {_default_copyright_owner: "matthew.rc.fitzpatrick@gmail.com"}
+_default_maintainer_to_email_map = \
+    _default_author_to_email_map
+_default_namespace_url = \
+    "https://github.com/mrfitzpa"
+_default_doc_root_url = \
+    "https://mrfitzpa.github.io/pylibtemplate"
 _default_gist_id = \
-    _pylibtemplate_gist_id
+    "7baba2a56d07b59cc49b8323f44416e5"
+_default_spdx_id = \
+    "GPL-3.0-or-later"
+_default_file_header = \
+    None
+_default_gitlab_test_tags = \
+    tuple()
+_default_gitlab_doc_tags = \
+    _default_gitlab_test_tags
 _default_path_to_directory_to_contain_new_repo = \
     ""
 
 
 
 def generate_local_git_repo_template(
+        repo_name=\
+        _default_repo_name,
         lib_name_for_imports=\
         _default_lib_name_for_imports,
         abbreviated_lib_name_for_docs=\
         _default_abbreviated_lib_name_for_docs,
         non_abbreviated_lib_name_for_docs=\
         _default_non_abbreviated_lib_name_for_docs,
-        author=\
-        _default_author,
-        email=\
-        _default_email,
+        author_to_email_map=\
+        _default_author_to_email_map,
+        maintainer_to_email_map=\
+        _default_maintainer_to_email_map,
+        copyright_owner=\
+        _default_copyright_owner,
+        namespace_url=\
+        _default_namespace_url,
+        doc_root_url=\
+        _default_doc_root_url,
         gist_id=\
         _default_gist_id,
+        spdx_id=\
+        _default_spdx_id,
+        file_header=\
+        _default_file_header,
+        gitlab_test_tags=\
+        _default_gitlab_test_tags,
+        gitlab_doc_tags=\
+        _default_gitlab_doc_tags,
         path_to_directory_to_contain_new_repo=\
         _default_path_to_directory_to_contain_new_repo):
     r"""Generate a local ``git`` repository template.
@@ -211,27 +416,61 @@ def generate_local_git_repo_template(
     the path ``path_to_directory_to_contain_new_repo``, i.e. the ``git clone``
     command is executed while the working directory is set temporarily to the
     path ``path_to_directory_to_contain_new_repo``; Next, it will rename the
-    cloned repository to ``lib_name_for_imports`` such that the path to the
-    cloned repository becomes
-    ``path_to_directory_to_contain_new_repo+"/"+lib_name_for_imports``; Next,
-    all instances of the string of characters "pylibtemplate" are replaced with
-    ``lib_name_for_imports``, be it in file contents, directory basenames, or
-    file basenames; Next, all instances of the string of characters
-    "PyLibTemplate" are replaced with ``abbreviated_lib_name_for_docs``; Next,
-    all instances of the string of characters "Python Library Template" are
-    replaced with ``non_abbreviated_lib_name_for_docs``; Next, all email address
-    placeholders (i.e. instances of the string of characters
-    "matthew.rc.fitzpatrick@gmail.com") are replaced with ``email``; Next, all
-    instances of the gist ID of ``pylibtemplate`` are replaced with ``gist_id``;
-    Next, all author placeholders (i.e. instances of the string of characters
-    "Matthew Fitzpatrick") are replaced with ``author``; Next, all copyright
-    statements are updated according to the current year; And lastly, the
-    following file is removed::
+    cloned repository to ``repo_name`` such that the path to the cloned
+    repository becomes ``path_to_directory_to_contain_new_repo+"/"+repo_name``;
+    Next, all instances of the string of characters
+    ``"https://github.com/mrfitzpa/pylibtemplate"`` are replaced with
+    ``namespace_url+"/"+repo_name``; Next, all instances of the string of
+    characters ``"https://mrfitzpa.github.io/pylibtemplate"`` are replaced with
+    ``doc_root_url``; Next, all instances of the string of characters
+    ``"pylibtemplate"`` are replaced with ``lib_name_for_imports``, be it in
+    file contents, directory basenames, or file basenames; Next, all instances
+    of the string of characters ``"PyLibTemplate"`` are replaced with
+    ``abbreviated_lib_name_for_docs``; Next, all instances of the string of
+    characters ``"Python Library Template"`` are replaced with
+    ``non_abbreviated_lib_name_for_docs``; Next, all copyright statements of the
+    form ``"Copyright <current_year> Matthew Fitzpatrick"`` are replaced by
+    ``"Copyright <current_year> "+copyright_owner``, where ``<current_year>`` is
+    the current year; Next, all instances of ``"Matthew Fitzpatrick"`` are
+    replaced by ``copyright_owner``; Next, all instances of the gist ID of
+    ``pylibtemplate`` are replaced with ``gist_id``;
+
+    Next, all license
+    information is updated to accord with the license specified by the SPDX ID
+    ``spdx_id``; Next, if ``file_header`` is set to a sequence (e.g. a Python
+    list) of Python strings, then the original file header appearing in the
+    files::
+
+    * ``<local_repo_root>/<lib_name_for_imports>/__init__.py``
+    * ``<local_repo_root>/setup.py``
+    * ``<local_repo_root>/run_tests.sh``
+    * ``<local_repo_root>/tests/test_root.py``
+    * ``<local_repo_root>/examples/generating_a_git_repository_template.py``
+    * ``<local_repo_root>/docs/conf.py``
+    * ``<local_repo_root>/docs/build_docs.py``
+
+    with ``<local_repo_root>`` being the root of the new local ``git``
+    repository, is replaced by a sequence of lines, where the ``n`` th line in
+    this sequence is ``file_header[n]`` (note that the original file header
+    starts with ``# -*- coding: utf-8 -*-`` and ends with ``# this program. If
+    not, see <https://www.gnu.org/licenses/gpl-3.0.html>.``; Next, all
+    authorship information (including author emails) is updated according to the
+    ``author_to_email_map`` parameter (see parameter description for details on
+    expected form of parameter); Next, all maintainership information (including
+    maintainer emails) is updated according to the ``maintainer_to_email_map``
+    parameter (see parameter description for details on expected form of
+    parameter); Next, if ``gitlab_test_tags`` is a nonempty sequence of Python
+    strings, then the section ``tags`` section of the ``test`` job in the file
+    ``<local_repo_root>/.gitlab-ci.yml`` is cleared and then repopulated with
+    the tags specified in ``gitlab_test_tags``; Next, if ``gitlab_doc_tags`` is
+    a nonempty sequence of Python strings, then the section ``tags`` section of
+    the ``pages`` job in the file ``<local_repo_root>/.gitlab-ci.yml`` is
+    cleared and then repopulated with the tags specified in ``gitlab_doc_tags``;
+    And lastly, the following file is removed::
 
     * ``<local_repo_root>/docs/how_to_create_a_python_library_using_pylibtemplate.rst``
 
-    where ``<local_repo_root>`` is the root of the local ``git`` repository, as
-    well as the following directory::
+    as well as the following directory::
 
     * ``<local_repo_root>/.git``
 
@@ -240,6 +479,8 @@ def generate_local_git_repo_template(
 
     Parameters
     ----------
+    repo_name : `str`, optional
+        The basename of the new repository.
     lib_name_for_imports : `str`, optional
         The name of the new Python library, as it would appear in Python import
         commands. This parameter needs to be a valid Python identifier.
@@ -250,15 +491,48 @@ def generate_local_git_repo_template(
     non_abbreviated_lib_name_for_docs : `str`, optional
         A non-abbreviated format of the name of the new Python library that
         appears in documentation pages.
-    author : `str`, optional
-        The name of the author of the new Python library.
-    email : `str`, optional
-        The email address of the author.
+    author_to_email_map : `dict`, optional
+        The author to email map. Each key ``author`` is assumed to be a string
+        storing the name of an author, and ``author_to_email_map[author]`` is a
+        string storing the corresponding email of the author.
+    maintainer_to_email_map : `dict`, optional
+        The maintainer to email map. Each key ``maintainer`` is assumed to be a
+        string storing the name of an maintainer, and
+        ``maintainer_to_email_map[maintainer]`` is a string storing the
+        corresponding email of the maintainer.
+    copyright_owner : `str`, optional
+        The name of the copyright owner of the new repository.
+    namespace_url : `str`, optional
+        The GitHub namespace url of the new repository.
+    doc_root_url : `str`, optional
+        The URL of the root of the documentation website of the new Python
+        library.
     gist_id : `str`, optional
         The ID of the GitHub gist to be used to record the code coverage from
         your unit tests. See the
         :ref:`how_to_create_a_python_library_using_pylibtemplate_sec` page for
         instructions on how to create a GitHub gist for your new Python library.
+    spdx_id : `str`, optional
+        The SPDX ID of the license of the new Python library. See `here
+        <https://spdx.org/licenses>`_ for a list of valid SPDX IDs.
+    file_header : `array_like` (`str, ndim=1) | `None`, optional
+        If ``file_header`` is set to ``None``, then the original file header,
+        mentioned in the summary documentation above, is left
+        unchanged. Otherwise, ``file_header`` is expected to be a sequence of
+        lines, where the ``n`` th line in this sequence is ``file_header[n]``
+        (note that the original file header starts with ``# -*- coding: utf-8
+        -*-`` and ends with ``# this program. If not, see
+        <https://www.gnu.org/licenses/gpl-3.0.html>.``. Combined, the lines
+        stored in ``file_header`` forms the new file header to be used in the
+        new Python library.
+    gitlab_test_tags : `array_like` (`str, ndim=1), optional
+        The tags of the ``test`` job in the file
+        ``<local_repo_root>/.gitlab-ci.yml``, where ``<local_repo_root>`` is the
+        root of the new local ``git`` repository.
+    gitlab_doc_tags : `array_like` (`str, ndim=1), optional
+        The tags of the ``pages`` job in the file
+        ``<local_repo_root>/.gitlab-ci.yml``, where ``<local_repo_root>`` is the
+        root of the new local ``git`` repository.
     path_to_directory_to_contain_new_repo : `str`, optional
         The path to the directory inside which the ``git`` commit --- of the
         ``pylibtemplate`` GitHub repository corresponding to the version of
@@ -282,52 +556,47 @@ def generate_local_git_repo_template(
 
 
 
-def _generate_local_git_repo_template(lib_name_for_imports,
+def _generate_local_git_repo_template(repo_name,
+                                      lib_name_for_imports,
                                       abbreviated_lib_name_for_docs,
                                       non_abbreviated_lib_name_for_docs,
-                                      author,
-                                      email,
+                                      author_to_email_map,
+                                      maintainer_to_email_map,
+                                      copyright_owner,
+                                      namespace_url,
+                                      doc_root_url,
                                       gist_id,
+                                      spdx_id,
+                                      file_header,
+                                      gitlab_test_tags,
+                                      gitlab_doc_tags,
                                       path_to_directory_to_contain_new_repo):
-    kwargs = locals()
+    repo_template_config_params = locals()
+    kwargs = {"repo_template_config_params": repo_template_config_params}
     _print_generate_local_git_repo_template_starting_msg(**kwargs)
 
     start_time = time.time()
 
     kwargs = {"path_to_directory_to_contain_new_repo": \
               path_to_directory_to_contain_new_repo,
-              "lib_name_for_imports": \
-              lib_name_for_imports}
+              "repo_name": \
+              repo_name}
     _clone_pylibtemplate_repo(**kwargs)
     _rm_file_subset_of_local_git_repo(**kwargs)
+
+    kwargs["lib_name_for_imports"] = lib_name_for_imports
     _mv_directory_subset_of_local_git_repo(**kwargs)
-    filenames = _get_paths_to_files_in_local_git_repo(**kwargs)
 
-    text_replacement_map = {_pylibtemplate_lib_name_for_imports: \
-                            lib_name_for_imports,
-                            _pylibtemplate_abbreviated_lib_name_for_docs: \
-                            abbreviated_lib_name_for_docs,
-                            _pylibtemplate_non_abbreviated_lib_name_for_docs: \
-                            non_abbreviated_lib_name_for_docs,
-                            _pylibtemplate_author: \
-                            author,
-                            _pylibtemplate_email: \
-                            email,
-                            _pylibtemplate_gist_id: \
-                            gist_id,
-                            _pylibtemplate_copyright_year: \
-                            str(datetime.datetime.now().year)}
-
-    kwargs = {"paths_to_files_in_local_git_repo": filenames,
-              "text_replacement_map": text_replacement_map}
+    kwargs = {"path_to_directory_to_contain_new_repo": \
+              path_to_directory_to_contain_new_repo,
+              "repo_name": \
+              repo_name,
+              "repo_template_config_params": \
+              repo_template_config_params}
     _replace_and_wrap_text(**kwargs)
 
-    kwargs = {"start_time": \
-              start_time,
-              "path_to_directory_to_contain_new_repo": \
-              path_to_directory_to_contain_new_repo,
-              "lib_name_for_imports": \
-              lib_name_for_imports}
+    del kwargs["repo_template_config_params"]
+    kwargs["start_time"] = start_time
     _print_generate_local_git_repo_template_end_msg(**kwargs)
 
     return None
@@ -335,41 +604,24 @@ def _generate_local_git_repo_template(lib_name_for_imports,
 
 
 def _print_generate_local_git_repo_template_starting_msg(
-        lib_name_for_imports,
-        abbreviated_lib_name_for_docs,
-        non_abbreviated_lib_name_for_docs,
-        author,
-        email,
-        gist_id,
-        path_to_directory_to_contain_new_repo):
-    unformatted_msg = ("Generating a local ``git`` repository with the "
-                       "following parameters:\n"
-                       "\n"
-                       "``lib_name_for_imports`` = ``'{}'``\n"
-                       "``abbreviated_lib_name_for_docs`` = ``'{}'``\n"
-                       "``non_abbreviated_lib_name_for_docs`` = ``'{}'``\n"
-                       "``author`` = ``'{}'``\n"
-                       "``email`` = ``'{}'``\n"
-                       "``gist_id`` = ``'{}'``\n"
-                       "``path_to_directory_to_contain_new_repo`` = ``'{}'``\n"
-                       "\n"
-                       "..."
-                       "\n")
-    msg = unformatted_msg.format(lib_name_for_imports,
-                                 abbreviated_lib_name_for_docs,
-                                 non_abbreviated_lib_name_for_docs,
-                                 author,
-                                 email,
-                                 gist_id,
-                                 path_to_directory_to_contain_new_repo)
+        repo_template_config_params):
+    msg = ("Generating a local ``git`` repository with the "
+           "following parameters:\n"
+           "\n")
+    for param_name, param in repo_template_config_params.items():
+        msg += ("``{}`` = ``'{}'``\n"
+                if isinstance(param, str)
+                else "``{}`` = ``{}``\n").format(param_name, param)
+    msg += "\n"
+    msg += "..."
+    msg += "\n"
     print(msg)
 
     return None
 
 
 
-def _clone_pylibtemplate_repo(path_to_directory_to_contain_new_repo,
-                              lib_name_for_imports):
+def _clone_pylibtemplate_repo(path_to_directory_to_contain_new_repo, repo_name):
     current_func_name = "_clone_pylibtemplate_repo"
 
     try:
@@ -380,8 +632,8 @@ def _clone_pylibtemplate_repo(path_to_directory_to_contain_new_repo,
 
         kwargs = {"path_to_directory_to_contain_new_repo": \
                   path_to_directory_to_contain_new_repo,
-                  "lib_name_for_imports": \
-                  lib_name_for_imports}
+                  "repo_name": \
+                  repo_name}
         path_to_new_repo = _generate_path_to_new_repo(**kwargs)
 
         tag = _get_pylibtemplate_tag()
@@ -396,7 +648,7 @@ def _clone_pylibtemplate_repo(path_to_directory_to_contain_new_repo,
         git.Repo.clone_from(**kwargs)
     except:
         err_msg = globals()[current_func_name+"_err_msg_1"]
-        IOError(err_msg)
+        raise IOError(err_msg)
 
     return None
 
@@ -417,9 +669,9 @@ def _make_output_dir(output_dirname):
 
 
 def _generate_path_to_new_repo(path_to_directory_to_contain_new_repo,
-                               lib_name_for_imports):
+                               repo_name):
     path_to_new_repo = "{}/{}".format(path_to_directory_to_contain_new_repo,
-                                      lib_name_for_imports)
+                                      repo_name)
 
     return path_to_new_repo
 
@@ -437,11 +689,11 @@ def _get_pylibtemplate_tag():
 
 
 def _rm_file_subset_of_local_git_repo(path_to_directory_to_contain_new_repo,
-                                      lib_name_for_imports):
+                                      repo_name):
     kwargs = {"path_to_directory_to_contain_new_repo": \
               path_to_directory_to_contain_new_repo,
-              "lib_name_for_imports": \
-              lib_name_for_imports}
+              "repo_name": \
+              repo_name}
     path_to_new_repo = _generate_path_to_new_repo(**kwargs)
 
     path_to_dir_to_rm = path_to_new_repo + "/.git"
@@ -456,9 +708,11 @@ def _rm_file_subset_of_local_git_repo(path_to_directory_to_contain_new_repo,
 
 
 def _mv_directory_subset_of_local_git_repo(
-        path_to_directory_to_contain_new_repo,
-        lib_name_for_imports):
-    kwargs = locals()
+        path_to_directory_to_contain_new_repo, repo_name, lib_name_for_imports):
+    kwargs = {"path_to_directory_to_contain_new_repo": \
+              path_to_directory_to_contain_new_repo,
+              "repo_name": \
+              repo_name}
     path_to_new_repo = _generate_path_to_new_repo(**kwargs)
 
     os.rename(path_to_new_repo + "/pylibtemplate",
@@ -468,8 +722,36 @@ def _mv_directory_subset_of_local_git_repo(
 
 
 
+def _replace_and_wrap_text(path_to_directory_to_contain_new_repo,
+                           repo_name,
+                           repo_template_config_params):
+    kwargs = {"path_to_directory_to_contain_new_repo": \
+              path_to_directory_to_contain_new_repo,
+              "repo_name": \
+              repo_name}
+    filenames = _get_paths_to_files_in_local_git_repo(**kwargs)
+
+    kwargs = {"repo_template_config_params": repo_template_config_params}
+    text_replacement_map = _generate_text_replacement_map(**kwargs)
+
+    for filename in filenames:
+        basename = os.path.basename(filename)
+
+        kwargs = {"filename": filename,
+                  "text_replacement_map": text_replacement_map,
+                  "repo_template_config_params": repo_template_config_params}
+        new_file_contents = _generate_new_file_contents(**kwargs)
+
+        with open(filename, "w") as file_obj:
+            line_set = new_file_contents
+            file_obj.write("\n".join(line_set))
+
+    return None
+
+
+
 def _get_paths_to_files_in_local_git_repo(path_to_directory_to_contain_new_repo,
-                                          lib_name_for_imports):
+                                          repo_name):
     kwargs = locals()
     path_to_new_repo = _generate_path_to_new_repo(**kwargs)
     
@@ -498,26 +780,216 @@ def _get_paths_to_files_in_local_git_repo(path_to_directory_to_contain_new_repo,
 
 
 
-def _replace_and_wrap_text(paths_to_files_in_local_git_repo,
-                           text_replacement_map):
-    filenames = paths_to_files_in_local_git_repo
+def _generate_text_replacement_map(repo_template_config_params):
+    unformatted_func_names = \
+        ("_generate_{}_github_repo_url",
+         "_generate_{}_doc_root_url",
+         "_generate_{}_lib_name_for_imports",
+         "_generate_{}_abbreviated_lib_name_for_docs",
+         "_generate_{}_non_abbreviated_lib_name_for_docs",
+         "_generate_{}_copyright_statement",
+         "_generate_{}_copyright_owner",
+         "_generate_{}_gist_id",
+         "_generate_{}_license_badge_url",
+         "_generate_{}_license_page_url",
+         "_generate_{}_spdx_id")
 
-    for filename in filenames:
-        basename = os.path.basename(filename)
+    text_replacement_map = dict()
+    global_symbol_table = globals()
+    for unformatted_func_name in unformatted_func_names:
+        func_name_0 = unformatted_func_name.format("old")
+        func_name_1 = unformatted_func_name.format("new")
+        func_0 = global_symbol_table[func_name_0]
+        func_1 = global_symbol_table[func_name_1]
+        old_text = func_0()
+        new_text = func_1(repo_template_config_params)
+        text_replacement_map[old_text] = new_text
 
-        kwargs = {"filename": filename,
-                  "text_replacement_map": text_replacement_map}
-        new_file_contents = _generate_new_file_contents(**kwargs)
-                            
-        with open(filename, "w") as file_obj:
-            line_set = new_file_contents
-            file_obj.write("\n".join(line_set))
-
-    return None
+    return text_replacement_map
 
 
 
-def _generate_new_file_contents(filename, text_replacement_map):
+def _generate_old_github_repo_url():
+    old_github_repo_url = "https://github.com/mrfitzpa/pylibtemplate"
+
+    return old_github_repo_url
+
+
+
+def _generate_new_github_repo_url(repo_template_config_params):
+    namespace_url = repo_template_config_params["namespace_url"]
+    repo_name = repo_template_config_params["repo_name"]
+    new_github_repo_url = namespace_url + "/" + repo_name
+
+    return new_github_repo_url
+
+
+
+def _generate_old_doc_root_url():
+    old_doc_root_url = "https://mrfitzpa.github.io/pylibtemplate"
+
+    return old_doc_root_url
+
+
+
+def _generate_new_doc_root_url(repo_template_config_params):
+    doc_root_url = repo_template_config_params["doc_root_url"]
+    new_doc_root_url = doc_root_url
+
+    return new_doc_root_url
+
+
+
+def _generate_old_lib_name_for_imports():
+    old_lib_name_for_imports = _default_lib_name_for_imports
+
+    return old_lib_name_for_imports
+
+
+
+def _generate_new_lib_name_for_imports(repo_template_config_params):
+    lib_name_for_imports = repo_template_config_params["lib_name_for_imports"]
+    new_lib_name_for_imports = lib_name_for_imports
+
+    return new_lib_name_for_imports
+
+
+
+def _generate_old_abbreviated_lib_name_for_docs():
+    old_abbreviated_lib_name_for_docs = _default_abbreviated_lib_name_for_docs
+
+    return old_abbreviated_lib_name_for_docs
+
+
+
+def _generate_new_abbreviated_lib_name_for_docs(repo_template_config_params):
+    abbreviated_lib_name_for_docs = \
+        repo_template_config_params["abbreviated_lib_name_for_docs"]
+    new_abbreviated_lib_name_for_docs = \
+        abbreviated_lib_name_for_docs
+
+    return new_abbreviated_lib_name_for_docs
+
+
+
+def _generate_old_non_abbreviated_lib_name_for_docs():
+    old_non_abbreviated_lib_name_for_docs = \
+        _default_non_abbreviated_lib_name_for_docs
+
+    return old_non_abbreviated_lib_name_for_docs
+
+
+
+def _generate_new_non_abbreviated_lib_name_for_docs(
+        repo_template_config_params):
+    non_abbreviated_lib_name_for_docs = \
+        repo_template_config_params["non_abbreviated_lib_name_for_docs"]
+    new_non_abbreviated_lib_name_for_docs = \
+        non_abbreviated_lib_name_for_docs
+
+    return new_non_abbreviated_lib_name_for_docs
+
+
+
+def _generate_old_copyright_statement():
+    old_copyright_statement = "Copyright {} {}".format(2026,
+                                                       _default_copyright_owner)
+
+    return old_copyright_statement
+
+
+
+def _generate_new_copyright_statement(repo_template_config_params):
+    copyright_owner = repo_template_config_params["copyright_owner"]
+    current_year = datetime.date.today().year
+    new_copyright_statement = "Copyright {} {}".format(current_year,
+                                                       copyright_owner)
+
+    return new_copyright_statement
+
+
+
+def _generate_old_copyright_owner():
+    old_copyright_owner = _default_copyright_owner
+
+    return old_copyright_owner
+
+
+
+def _generate_new_copyright_owner(repo_template_config_params):
+    copyright_owner = repo_template_config_params["copyright_owner"]
+    new_copyright_owner = copyright_owner
+
+    return new_copyright_owner
+
+
+
+def _generate_old_gist_id():
+    old_gist_id = _default_gist_id
+
+    return old_gist_id
+
+
+
+def _generate_new_gist_id(repo_template_config_params):
+    gist_id = repo_template_config_params["gist_id"]
+    new_gist_id = gist_id
+
+    return new_gist_id
+
+
+
+def _generate_old_license_badge_url():
+    old_license_badge_url = ("https://img.shields.io"
+                             "/badge/License-GPLv3-blue.svg")
+
+    return old_license_badge_url
+
+
+
+def _generate_new_license_badge_url(repo_template_config_params):
+    spdx_id = repo_template_config_params["spdx_id"]
+    new_license_info = _get_license_info_from_spdx_id(spdx_id)
+    new_license_badge_url = new_license_info["license_badge_url"]
+
+    return new_license_badge_url
+
+
+
+def _generate_old_license_page_url():
+    old_license_page_url = "https://www.gnu.org/licenses/gpl-3.0"
+
+    return old_license_page_url
+
+
+
+def _generate_new_license_page_url(repo_template_config_params):
+    spdx_id = repo_template_config_params["spdx_id"]
+    new_license_info = _get_license_info_from_spdx_id(spdx_id)
+    new_license_page_url = new_license_info["license_page_url"]
+
+    return new_license_page_url
+
+
+
+def _generate_old_spdx_id():
+    old_spdx_id = _default_spdx_id
+
+    return old_spdx_id
+
+
+
+def _generate_new_spdx_id(repo_template_config_params):
+    spdx_id = repo_template_config_params["spdx_id"]
+    new_spdx_id = spdx_id
+
+    return new_spdx_id
+
+
+
+def _generate_new_file_contents(filename,
+                                text_replacement_map,
+                                repo_template_config_params):
     with open(filename, "r") as file_obj:
         line_set = file_obj.read().splitlines()
         original_file_contents = line_set
@@ -526,6 +998,23 @@ def _generate_new_file_contents(filename, text_replacement_map):
               "text_replacement_map": text_replacement_map}
     modified_line_set = _apply_text_replacements_to_line_set(**kwargs)
     modified_file_contents = modified_line_set
+
+    basename = pathlib.Path(filename).name
+    file_ext = pathlib.Path(filename).suffix
+
+    kwargs = {"repo_template_config_params": repo_template_config_params}
+    if file_ext in (".sh", ".py"):
+        kwargs["file_contents"] = modified_file_contents
+        modified_file_contents = _update_file_header(**kwargs)
+    if basename == "LICENSE":
+        kwargs["file_contents"] = modified_file_contents
+        modified_file_contents = _update_license_file_text(**kwargs)
+    if basename == "pyproject.toml":
+        kwargs["file_contents"] = modified_file_contents
+        modified_file_contents = _update_author_and_maintainer_info(**kwargs)
+    if basename == ".gitlab-ci.yml":
+        kwargs["file_contents"] = modified_file_contents
+        modified_file_contents = _update_git_test_and_doc_info(**kwargs)
 
     kwargs = {"line_set_to_modify": modified_file_contents,
               "filename": filename}
@@ -715,7 +1204,8 @@ def _apply_text_wrapping_to_line_set_of_md_or_rst_file(line_set_to_modify):
             modified_line_subset = [modified_line_1]
         else:
             end_of_paragraph_has_not_been_reached = True
-            
+
+            modified_line_2 = ""
             while end_of_paragraph_has_not_been_reached:
                 if line_idx+1 < len(modified_line_set):
                     modified_line_2 = modified_line_set[line_idx+1].rstrip()
@@ -741,8 +1231,7 @@ def _apply_text_wrapping_to_line_set_of_md_or_rst_file(line_set_to_modify):
                              + modified_line_set[line_idx+1:])
 
         line_idx += len(modified_line_subset)
-        if line_idx >= len(modified_line_set):
-            end_of_file_has_not_been_reached = False
+        end_of_file_has_not_been_reached = (line_idx < len(modified_line_set))
 
     lines_resulting_from_text_wrapping = modified_line_set
 
@@ -795,14 +1284,156 @@ def _apply_text_wrapping_to_line_set_of_sh_file(line_set_to_modify):
 
 
 
+def _update_file_header(repo_template_config_params, file_contents):
+    line_idx = -1
+    substring_0 = "Copyright"
+    substring_1 = ">."
+    
+    beg_of_file_header_has_not_been_found = True
+    while beg_of_file_header_has_not_been_found:
+        line_idx += 1
+        line = file_contents[line_idx]
+        beg_of_file_header_has_not_been_found = (substring_0 not in line)
+    start = line_idx
+
+    end_of_file_header_has_not_been_found = True
+    while end_of_file_header_has_not_been_found:
+        line_idx += 1
+        line = file_contents[line_idx]
+        end_of_file_header_has_not_been_found = (substring_1 not in line)
+    stop = line_idx+1
+
+    lines_before_old_file_header = file_contents[:start]
+    old_file_header = file_contents[start:stop]
+    lines_after_old_file_header = file_contents[stop:]
+
+    new_file_header = repo_template_config_params["file_header"]
+    new_file_header = (list(new_file_header)
+                       if (new_file_header is not None)
+                       else old_file_header)
+
+    modified_file_contents = (lines_before_old_file_header
+                              + new_file_header
+                              + lines_after_old_file_header)
+
+    return modified_file_contents
+
+
+
+def _update_license_file_text(repo_template_config_params, file_contents):
+    spdx_id = repo_template_config_params["spdx_id"]
+
+    license_info = _get_license_info_from_spdx_id(spdx_id)
+    license_text = license_info["license_text"]
+
+    modified_file_contents = license_text
+
+    return modified_file_contents
+
+
+
+def _update_author_and_maintainer_info(repo_template_config_params,
+                                       file_contents):
+    line_idx = -1
+    substring_0 = "authors = ["
+    substring_1 = "license ="
+    
+    beg_of_author_and_maintainer_info_has_not_been_found = True
+    while beg_of_author_and_maintainer_info_has_not_been_found:
+        line_idx += 1
+        line = file_contents[line_idx]
+        beg_of_author_and_maintainer_info_has_not_been_found = (substring_0
+                                                                not in
+                                                                line)
+    start = line_idx
+
+    end_of_author_and_maintainer_info_has_not_been_found = True
+    while end_of_author_and_maintainer_info_has_not_been_found:
+        line_idx += 1
+        line = file_contents[line_idx]
+        end_of_author_and_maintainer_info_has_not_been_found = (substring_1
+                                                                not in
+                                                                line)
+    stop = line_idx
+
+    lines_before_old_author_and_maintainer_info = file_contents[:start]
+    old_author_and_maintainer_info = file_contents[start:stop]
+    lines_after_old_author_and_maintainer_info = file_contents[stop:]
+    
+    new_author_and_maintainer_info = []
+    for key_category in ("author", "maintainer"):
+        config_param_name = key_category+"_to_email_map"
+        name_to_email_map = repo_template_config_params[config_param_name]
+        new_author_and_maintainer_info += [key_category+"s = ["]
+        for name, email in name_to_email_map.items():
+            line = "    {name = \""+name+"\", email = \""+email+"\"},"
+            new_author_and_maintainer_info += [line]
+        new_author_and_maintainer_info += ["]"]
+
+    modified_file_contents = (lines_before_old_author_and_maintainer_info
+                              + new_author_and_maintainer_info
+                              + lines_after_old_author_and_maintainer_info)
+
+    return modified_file_contents
+
+
+
+def _update_git_test_and_doc_info(repo_template_config_params, file_contents):
+    line_idx = -1
+    substring = "    - <INSERT"
+    modified_file_contents = file_contents.copy()
+
+    eof_has_not_been_reached = True
+
+    while eof_has_not_been_reached:
+        tag_sec_search_has_not_been_completed = True
+        while tag_sec_search_has_not_been_completed:
+            line_idx += 1
+            line = modified_file_contents[line_idx]
+            current_total_line_count = len(modified_file_contents)
+            eof_has_not_been_reached = (line_idx < current_total_line_count-1)
+            tag_sec_search_has_not_been_completed = (eof_has_not_been_reached
+                                                     and
+                                                     (substring not in line))
+
+        if substring in line:
+            tag_category = line.split("_")[1].lower()
+
+            start = line_idx
+            stop = start+1
+    
+            lines_before_old_tag_info = modified_file_contents[:start]
+            old_tag_info = modified_file_contents[start:stop]
+            lines_after_old_tag_info = modified_file_contents[stop:]
+
+            config_param_name = "gitlab_"+tag_category+"_tags"
+            tags = repo_template_config_params[config_param_name]
+            new_tag_info = []
+            for tag in tags:
+                new_tag_info += ["    - "+tag]
+            new_tag_info = (new_tag_info
+                            if (len(new_tag_info) > 0)
+                            else old_tag_info)
+        
+            modified_file_contents = (lines_before_old_tag_info
+                                      + new_tag_info
+                                      + lines_after_old_tag_info)
+
+            current_total_line_count = len(modified_file_contents)
+            eof_has_not_been_reached = (line_idx < current_total_line_count-1)
+
+    return modified_file_contents
+
+
+
 def _print_generate_local_git_repo_template_end_msg(
         start_time,
         path_to_directory_to_contain_new_repo,
-        lib_name_for_imports):
+        repo_name):
     elapsed_time = time.time() - start_time
     path_to_local_git_repo_template = (path_to_directory_to_contain_new_repo
                                        + "/"
-                                       + lib_name_for_imports)
+                                       + repo_name)
 
     unformatted_msg = ("Finished generating the local ``git`` repository, "
                        "which is located at the path ``'{}'``. Time taken to "
@@ -818,8 +1449,12 @@ def _print_generate_local_git_repo_template_end_msg(
 
 def _run_pylibtemplate_as_an_app(cmd_line_args=None):
     converted_cmd_line_args = _parse_and_convert_cmd_line_args(cmd_line_args)
+    config_filename = converted_cmd_line_args["config_filename"]
 
-    kwargs = converted_cmd_line_args
+    with open(config_filename, "r", encoding="utf-8") as file_obj:
+        config = json.load(file_obj)
+
+    kwargs = config
     generate_local_git_repo_template(**kwargs)
 
     return None
@@ -827,38 +1462,20 @@ def _run_pylibtemplate_as_an_app(cmd_line_args=None):
 
 
 def _parse_and_convert_cmd_line_args(cmd_line_args):
-    arg_names = ("lib_name_for_imports",
-                 "abbreviated_lib_name_for_docs",
-                 "non_abbreviated_lib_name_for_docs",
-                 "author",
-                 "email",
-                 "gist_id",
-                 "path_to_directory_to_contain_new_repo")
-
-    parser = argparse.ArgumentParser()
-
-    global_symbol_table = globals()
-    for arg_name in arg_names:
-        obj_name = "_default_" + arg_name
-        default_arg_val = global_symbol_table[obj_name]
-            
-        arg_type = type(default_arg_val)
-
-        parser.add_argument("--"+arg_name,
-                            default=default_arg_val,
-                            type=arg_type)
-
     current_func_name = "_parse_and_convert_cmd_line_args"
 
-    try:    
-        args = parser.parse_args(args=cmd_line_args)
+    try:
+        parser = argparse.ArgumentParser()
+        arg_names = ("config_filename",)
+        for arg_name in arg_names:
+            parser.add_argument("--"+arg_name, type=str, required=True)
+        args = parser.parse_args(cmd_line_args)
+        config_filename = args.config_filename
     except:
         err_msg = globals()[current_func_name+"_err_msg_1"]
         raise SystemExit(err_msg)
 
-    converted_cmd_line_args = dict()
-    for arg_name in arg_names:
-        converted_cmd_line_args[arg_name] = getattr(args, arg_name)
+    converted_cmd_line_args = {"config_filename": config_filename}
     
     return converted_cmd_line_args
 
@@ -875,6 +1492,23 @@ _check_and_convert_lib_name_for_imports_err_msg_1 = \
 _check_and_convert_abbreviated_lib_name_for_docs_err_msg_1 = \
     _check_and_convert_lib_name_for_imports_err_msg_1
 
+_check_and_convert_author_to_email_map_err_msg_1 = \
+    ("The key ``'{}'`` in the dictionary ``author_to_email_map`` must be a "
+     "string.")
+
+_check_and_convert_maintainer_to_email_map_err_msg_1 = \
+    ("The key ``'{}'`` in the dictionary ``maintainer_to_email_map`` must be a "
+     "string.")
+
+_check_and_convert_spdx_id_err_msg_1 = \
+    ("The object ``spdx_id``, which was set to ``'{}'``, must be a string that "
+     "is a valid SPDX ID identifier that is also supported by "
+     "``pylibtemplate``.")
+
+_get_spdx_json_data_err_msg_1 = \
+    ("The object ``spdx_id``, which was set to ``'{}'``, must be a string that "
+     "is a valid SPDX ID identifier.")
+
 _make_output_dir_err_msg_1 = \
     ("An error occurred in trying to make the directory ``'{}'``: see "
      "traceback for details.")
@@ -887,24 +1521,13 @@ _parse_and_convert_cmd_line_args_err_msg_1 = \
     ("The correct form of the command is:\n"
      "\n"
      "    pylibtemplate "
-     "--lib_name_for_imports="
-     "<lib_name_for_imports> "
-     "--abbreviated_lib_name_for_docs="
-     "<abbreviated_lib_name_for_docs> "
-     "--non_abbreviated_lib_name_for_docs="
-     "<non_abbreviated_lib_name_for_docs> "
-     "--author="
-     "<author> "
-     "--email="
-     "<email> "
-     "--gist_id="
-     "<gist_id> "
-     "--path_to_directory_to_contain_new_repo="
-     "<path_to_directory_to_contain_new_repo>\n"
+     "--config_filename=<config_filename>\n"
      "\n"
-     "where the command line arguments are the same as the parameters of the "
-     "function ``pylibtemplate.generate_local_git_repo_template``. For "
-     "details, see the documentation for the libary ``pylibtemplate`` via the "
+     "where ``<config_filename>`` is a path to a configuration file, which is "
+     "expected to be a JSON file that stores a valid instance of each "
+     "parameter of the function "
+     "``pylibtemplate.generate_local_git_repo_template``. For details, see the "
+     "documentation for the library ``pylibtemplate`` via the link "
      "link https://mrfitzpa.github.io/pylibtemplate, and navigate the "
      "reference guide for the version of the library that is installed.")
 

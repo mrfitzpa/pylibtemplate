@@ -1,5 +1,5 @@
 name: Test library
-# This workflow runs the unit tests for the Python versions 3.9, 3.10, and 3.11.
+# This workflow runs the unit tests for the Python versions 3.11, and 3.12.
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.11", "3.12"]
     steps:
     - name: Checkout
       uses: actions/checkout@v4

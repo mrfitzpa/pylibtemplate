@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2025 Matthew Fitzpatrick.
+# Copyright 2026 Matthew Fitzpatrick.
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,6 +20,9 @@ r"""Configuration file for the Sphinx documentation builder.
 #####################################
 ## Load libraries/packages/modules ##
 #####################################
+
+# For getting the current year.
+import datetime
 
 # For importing libraries.
 import importlib
@@ -45,8 +48,10 @@ import re
 ## Project information.
 
 project = "pylibtemplate"
-author = "Matthew Fitzpatrick"
-copyright = "2025, {}".format(author)
+copyright_owner = "Matthew Fitzpatrick"
+author = copyright_owner
+current_year = datetime.date.today().year
+copyright = "{} {}".format(current_year, author)
 
 
 
