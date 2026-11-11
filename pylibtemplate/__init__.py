@@ -344,7 +344,7 @@ def _check_and_convert_path_to_directory_to_contain_new_repo(params):
 _default_repo_name = \
     "pylibtemplate"
 _default_lib_name_for_imports = \
-    "PyLibTemplate"
+    "pylibtemplate"
 _default_abbreviated_lib_name_for_docs = \
     "PyLibTemplate"
 _default_non_abbreviated_lib_name_for_docs = \
@@ -1069,7 +1069,7 @@ def _apply_text_wrapping_to_line_set_of_py_file(line_set_to_modify):
     modified_line_set = line_set_to_modify.copy()
 
     pattern_1 = r"#\ ((Copyright)|(For\ setting\ up))\ .*"
-    pattern_2 = r"\s*((lib_name)|(project)|(author))\ =\ \".+"
+    pattern_2 = r"\s*((lib_name)|(project)|(copyright_owner))\ =\ \".+"
     pattern_3 = r"\s*r\"\"\".+\ ``.+``.+"
 
     end_of_file_has_not_been_reached = True

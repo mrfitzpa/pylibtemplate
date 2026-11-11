@@ -131,13 +131,16 @@ def test_3_of_generate_local_git_repo_template():
         generate_repo_template_config_params_1()
     path_to_test_data = \
         repo_template_config_params["path_to_directory_to_contain_new_repo"]
+    repo_name = \
+        repo_template_config_params["repo_name"]
 
     pathlib.Path(path_to_test_data).mkdir(parents=True, exist_ok=True)
     os.chmod(path_to_test_data, 0o111)
 
     try:
         with pytest.raises(IOError) as err_info:
-            kwargs = repo_template_config_params
+            kwargs = {"path_to_directory_to_contain_new_repo": \
+                      path_to_test_data + "/" + repo_name}
             pylibtemplate.generate_local_git_repo_template(**kwargs)
     finally:
         os.chmod(path_to_test_data, 0o711)
@@ -167,6 +170,23 @@ def test_4_of_generate_local_git_repo_template():
     with pytest.raises(ValueError) as err_info:
         kwargs = {"spdx_id": "foobar"}
         pylibtemplate.generate_local_git_repo_template(**kwargs)
+
+    return None
+
+
+
+def test_5_of_generate_local_git_repo_template():
+    repo_template_config_params = \
+        generate_repo_template_config_params_1()
+    path_to_test_data = \
+        repo_template_config_params["path_to_directory_to_contain_new_repo"]
+
+    try:
+        kwargs = repo_template_config_params
+        kwargs["copyright_owner"] = "F"+ "o"*170 +" Bar"
+        pylibtemplate.generate_local_git_repo_template(**kwargs)
+    finally:
+        shutil.rmtree(path_to_test_data, ignore_errors=True)
 
     return None
 
